@@ -1,1 +1,2 @@
 Slot-Clicker
+Legend
