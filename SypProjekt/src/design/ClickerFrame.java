@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,8 @@ public class ClickerFrame extends JFrame
     private Container c;
     private static int vermoegen;
     private static File f;
+    private int autoclick, superclick, offlineproduction;
+    private Shop shop;
     private Font inscription = new Font("Arial", Font.BOLD, 11);
     
     public ClickerFrame(String title)
@@ -72,7 +75,7 @@ public class ClickerFrame extends JFrame
    
     private void initNavigator()
     {
-        plNavigator = new JPanel(new BorderLayout());
+        plNavigator = new JPanel(new GridLayout(1,3));
         plNavigator.setPreferredSize(new Dimension(0, 30));
         
         lbVermoegen = new JLabel("Vermögen: " + vermoegen + " Credits", SwingConstants.CENTER);
@@ -88,16 +91,11 @@ public class ClickerFrame extends JFrame
         btSlotMachine.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btSlotMachine.setFocusable(false);
         
-        btSlotMachine.addActionListener(new ActionListener() 
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-               dispose();
-               saveVermoegen(f);
-               SlotFrame slotframe = new SlotFrame("Slot Machine", vermoegen);
-               //slotframe.setVermoegen(vermoegen);
-            }
+        btSlotMachine.addActionListener((ActionEvent e) -> {
+            dispose();
+            saveVermoegen(f);
+            SlotFrame slotframe = new SlotFrame("Slot Machine", vermoegen);
+            //slotframe.setVermoegen(vermoegen);
         });
         
         btShop = new JButton("Shop");
@@ -106,10 +104,14 @@ public class ClickerFrame extends JFrame
         btShop.setBackground(new Color(123, 171, 247));
         btShop.setOpaque(true);
         btShop.setFocusable(false);
+        btShop.addActionListener((ActionEvent e) -> {
+            shop = new Shop(vermoegen, autoclick, superclick, offlineproduction);
+            shop.setVisible(true);
+        });
         
-        plNavigator.add(lbVermoegen, BorderLayout.EAST);
-        plNavigator.add(btSlotMachine, BorderLayout.WEST);
-        plNavigator.add(btShop, BorderLayout.CENTER);
+        plNavigator.add(btSlotMachine);
+        plNavigator.add(btShop);
+        plNavigator.add(lbVermoegen);
     }
     
     private void initImage() throws IOException
@@ -181,7 +183,7 @@ public class ClickerFrame extends JFrame
     private void initFrame()
     {
         this.setLayout(new BorderLayout());
-        this.setSize(350, 500);
+        this.setSize(500, 400);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);

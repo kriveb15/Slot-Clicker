@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -21,19 +22,22 @@ import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class SlotFrame extends JFrame
 {
 
     private Container c;
-    private JPanel plNavigator, plSlotMachine, controlpanel, plStartStopCollect, plInnerSlot;
-    private JPanel plBackground;
+    private JPanel plNavigator, plSlotMachine, controlpanel, plStartStopCollect, plInnerSlot, plSettings;
+    private JPanel plBackground, plSettingsContainer;
     private JLabel lbVermoegen, lbSeven, lbBell, lbErdbeere, lbKirsche, lbMelone, lbPfirsich, lbPflaume, lbTraube, lbZitrone;
+    private JLabel lbRoundResult;
+    private JTextField tfWager;
     private JLabel[][] fields = new JLabel[3][3];
 
     private JButton btClicker, btShop;
-    private JButton btStartRound, btCollect;
+    private JButton btStartRound, btCollect, btPlus, btMinus;
     private BufferedImage[] slotImages = new BufferedImage[9];
 
     private JLabel template_shootingStar;
@@ -158,6 +162,7 @@ public class SlotFrame extends JFrame
         btShop.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btShop.setFocusable(false);
 
+        lbRoundResult = new JLabel();
         plNavigator.add(btClicker);
         plNavigator.add(btShop);
         plNavigator.add(lbVermoegen);
@@ -169,12 +174,16 @@ public class SlotFrame extends JFrame
         controlpanel.setPreferredSize(new Dimension(0, 100));
         plStartStopCollect = new JPanel(new BorderLayout());
         plStartStopCollect.setPreferredSize(new Dimension(150, 0));
+        plSettings = new JPanel(new GridLayout());
+        plSettings.setPreferredSize(new Dimension(450, 70));
+        plSettingsContainer = new JPanel(new BorderLayout());
+        plSettingsContainer.setPreferredSize(new Dimension(450, 0));
 
         btStartRound = new JButton("Start");
         btStartRound.setBackground(new Color(123, 171, 247));
         btStartRound.setOpaque(true);
         btStartRound.setFont(new Font("Arial", Font.BOLD, 11));
-        btStartRound.setBorder();
+        btStartRound.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         btStartRound.setFocusable(false);
         btStartRound.addActionListener(new ActionListener()
         {
@@ -185,6 +194,7 @@ public class SlotFrame extends JFrame
                 {
                     started = true;
                     btStartRound.setText("Stop");
+                    startSlotProcess();
                 } else
                 {
                     started = false;
@@ -197,7 +207,7 @@ public class SlotFrame extends JFrame
         btCollect.setBackground(new Color(123, 171, 247));
         btCollect.setOpaque(true);
         btCollect.setFont(new Font("Arial", Font.BOLD, 11));
-        btCollect.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        btCollect.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         btCollect.setFocusable(false);
         btCollect.addActionListener(new ActionListener()
         {
@@ -208,11 +218,35 @@ public class SlotFrame extends JFrame
             }
         });
 
+        lbRoundResult = new JLabel("mmmmmmmmm", SwingConstants.CENTER);
+        lbRoundResult.setPreferredSize(new Dimension(450, 30));
+
         btStartRound.setPreferredSize(new Dimension(0, 60));
         btCollect.setPreferredSize(new Dimension(0, 20));
         plStartStopCollect.add(btStartRound, BorderLayout.NORTH);
         plStartStopCollect.add(btCollect, BorderLayout.SOUTH);
         controlpanel.add(plStartStopCollect, BorderLayout.EAST);
+
+        plSettingsContainer.add(lbRoundResult, BorderLayout.NORTH);
+        plSettingsContainer.add(plSettings, BorderLayout.SOUTH);
+        controlpanel.add(plSettingsContainer, BorderLayout.WEST);
+
+    }
+
+    private void startSlotProcess()
+    {
+        Random position = new Random();
+        //int counter = 0;
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                int pos = position.nextInt(9);
+
+                fields[i][j].setIcon(new ImageIcon(slotImages[pos]));
+            }
+        }
     }
 
     private void initFrame()
