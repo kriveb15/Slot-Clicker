@@ -7,6 +7,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,6 +37,8 @@ public class Shop extends JFrame {
     private JLabel  lbSuper;
     private JLabel  lbCredits;
     private Font inscription = new Font("Arial", Font.BOLD, 11);
+
+
     
 
     /*Konstruktor, bekommt von ClickerFrame Vermögen plus die 
@@ -52,7 +56,7 @@ public class Shop extends JFrame {
     //Grundlegende JFrame Einstellungen
     private void initComponents() {       
         //Schließoption und Cursor
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); 
         setSize(500,250);
         //Die Panels zum Frame hinzufügen
@@ -94,6 +98,7 @@ public class Shop extends JFrame {
         
         btBacktoClicker.addActionListener((ActionEvent e) -> {
             dispose();
+            new ClickerFrame("Slot Clicker").setVisible(true);
         });
         btToSlot.addActionListener((ActionEvent e) -> {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -138,7 +143,9 @@ public class Shop extends JFrame {
         
         //Action Listener auf den Buttons
         btAutoClick.addActionListener((ActionEvent evt) -> {
-            onAutoClick(evt);
+        
+                onAutoClick(evt);
+          
         });
         btSuperClick.addActionListener((java.awt.event.ActionEvent evt) -> {
             onSuperClick(evt);
@@ -183,9 +190,16 @@ public class Shop extends JFrame {
     }
     
     private void onAutoClick(java.awt.event.ActionEvent evt) {
+        if(vermoegen >= price1)
+        {
         autoclick++;
         price1 = (int) (500 + Math.pow(2, autoclick));
+        vermoegen = vermoegen-price1;
         btAutoClick.setText(price1 + "");
+        lbAuto.setText("Buy Autoclick (Level: " + autoclick + ")");
+        refreshCredits();
+        }
+
     }
 
     private void onSuperClick(java.awt.event.ActionEvent evt) {
@@ -195,6 +209,19 @@ public class Shop extends JFrame {
     private void onOfflinePro(java.awt.event.ActionEvent evt) {
         
     }
+    private void refreshCredits()
+    {
+        lbCredits.setText(" "+vermoegen+" Credits"); 
+        
+    }
+
+    public int getVermoegen() {
+        return vermoegen;
+    }
+
+    private void close() {
+        dispose();
+    }
     
-                  
+    
 }

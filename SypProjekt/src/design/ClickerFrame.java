@@ -7,9 +7,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -54,6 +54,10 @@ public class ClickerFrame extends JFrame
             System.out.println("unreadable");
         }
         initComponents();       
+    }
+
+    public ClickerFrame(int vermoegen) throws HeadlessException {
+        this.vermoegen = vermoegen;
     }
     
     private void initComponents()
@@ -105,8 +109,10 @@ public class ClickerFrame extends JFrame
         btShop.setOpaque(true);
         btShop.setFocusable(false);
         btShop.addActionListener((ActionEvent e) -> {
+            dispose();
             shop = new Shop(vermoegen, autoclick, superclick, offlineproduction);
             shop.setVisible(true);
+            vermoegen = shop.getVermoegen();
         });
         
         plNavigator.add(btSlotMachine);
