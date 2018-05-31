@@ -1,5 +1,6 @@
 package design;
 
+import static design.ClickerFrame.saveVermoegen;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -7,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -62,7 +64,7 @@ public class Shop extends JFrame {
         //Die Panels zum Frame hinzufügen
         getContentPane().add(initplNavigator(), BorderLayout.NORTH);
         getContentPane().add(initplLabels(), BorderLayout.CENTER);
-        
+               
     }                        
 
 
@@ -123,6 +125,18 @@ public class Shop extends JFrame {
         
         //Design Änderungen Buttons
         //btAutoClick.setBackground(new Color(123, 171, 247));
+        lbAuto.setOpaque(true);
+        lbAuto.setBackground(Color.BLACK);
+        lbAuto.setForeground(Color.RED);
+        
+        lbSuper.setOpaque(true);
+        lbSuper.setBackground(Color.BLACK);
+        lbSuper.setForeground(Color.RED);
+        
+        lbOffline.setOpaque(true);
+        lbOffline.setBackground(Color.BLACK);
+        lbOffline.setForeground(Color.RED);
+        
         btAutoClick.setOpaque(true);
         btAutoClick.setFont(inscription);
         btAutoClick.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -143,8 +157,7 @@ public class Shop extends JFrame {
         
         //Action Listener auf den Buttons
         btAutoClick.addActionListener((ActionEvent evt) -> {
-        
-                onAutoClick(evt);
+            onAutoClick(evt);
           
         });
         btSuperClick.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -211,8 +224,8 @@ public class Shop extends JFrame {
     }
     private void refreshCredits()
     {
-        lbCredits.setText(" "+vermoegen+" Credits"); 
-        
+        lbCredits.setText(" "+vermoegen+" Credits");
+        ClickerFrame.saveVermoegen(new File("src/res/save_file_vermoegen.txt"), vermoegen, autoclick, superclick, offlineproduction);
     }
 
     public int getVermoegen() {

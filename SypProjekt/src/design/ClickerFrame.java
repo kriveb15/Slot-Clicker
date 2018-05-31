@@ -37,7 +37,7 @@ public class ClickerFrame extends JFrame
     private Container c;
     private static int vermoegen;
     private static File f;
-    private int autoclick, superclick, offlineproduction;
+    private static int autoclick, superclick, offlineproduction;
     private Shop shop;
     private Font inscription = new Font("Arial", Font.BOLD, 11);
     
@@ -53,11 +53,7 @@ public class ClickerFrame extends JFrame
         {
             System.out.println("unreadable");
         }
-        initComponents();       
-    }
-
-    public ClickerFrame(int vermoegen) throws HeadlessException {
-        this.vermoegen = vermoegen;
+        initComponents(); 
     }
     
     private void initComponents()
@@ -97,7 +93,7 @@ public class ClickerFrame extends JFrame
         
         btSlotMachine.addActionListener((ActionEvent e) -> {
             dispose();
-            saveVermoegen(f);
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
             SlotFrame slotframe = new SlotFrame("Slot Machine", vermoegen);
             //slotframe.setVermoegen(vermoegen);
         });
@@ -110,9 +106,9 @@ public class ClickerFrame extends JFrame
         btShop.setFocusable(false);
         btShop.addActionListener((ActionEvent e) -> {
             dispose();
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
             shop = new Shop(vermoegen, autoclick, superclick, offlineproduction);
             shop.setVisible(true);
-            vermoegen = shop.getVermoegen();
         });
         
         plNavigator.add(btSlotMachine);
@@ -158,10 +154,16 @@ public class ClickerFrame extends JFrame
         System.out.println("Versuche Speicherfile zu erreichen...");
         try 
         {
+            
             System.out.println("Speicherfile erreicht!");
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = br.readLine();
-            vermoegen = Integer.parseInt(line);
+            String[] tokens = line.split(",");
+            System.out.println(""+line);
+            vermoegen = Integer.parseInt(tokens[0]);
+            autoclick = Integer.parseInt(tokens[1]);
+            superclick = Integer.parseInt(tokens[2]);
+            offlineproduction = Integer.parseInt(tokens[3]);
             
         } 
         catch (FileNotFoundException ex) 
@@ -171,13 +173,14 @@ public class ClickerFrame extends JFrame
         
     }
     
-    public static void saveVermoegen(File f) 
+    public static void saveVermoegen(File f, int credits,int autoclick,int superclick,int offlineproduction) 
     {
        try
        {
           PrintWriter pw = new PrintWriter(f);
-          pw.write(""+vermoegen);
+          pw.write(""+credits+","+autoclick+","+superclick+","+offlineproduction);
           pw.close();
+           System.out.println("speichert");
        }
        catch(FileNotFoundException ex)
        {
@@ -206,7 +209,7 @@ public class ClickerFrame extends JFrame
             @Override
             public void run() 
             {
-               saveVermoegen(f);
+               saveVermoegen(f,vermoegen,autoclick,superclick,offlineproduction);
             }
         }));
     }
