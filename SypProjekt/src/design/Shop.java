@@ -3,14 +3,11 @@ package design;
 import static design.ClickerFrame.saveVermoegen;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,6 +24,7 @@ public class Shop extends JFrame {
     private int     price1, autoclick;
     private int     price2, superclick;
     private int     price3,vermoegen, offlineproduction;
+    private File    speicherort;
     private JButton btAutoClick;
     private JButton btSuperClick;
     private JButton btofflineProduction;
@@ -46,10 +44,11 @@ public class Shop extends JFrame {
     /*Konstruktor, bekommt von ClickerFrame Vermögen plus die 
      *Levels der verschiedenen Kaufoptionen
      */
-    public Shop(int vermoegen, int autoclick, int superclick, int offlineproduction) {
+    public Shop(File f, int vermoegen, int autoclick, int superclick, int offlineproduction) {
         this.vermoegen = vermoegen;
         this.autoclick = autoclick;
         this.superclick = superclick;
+        this.speicherort = f;
         this.offlineproduction = offlineproduction;
         initComponents();
         
@@ -58,9 +57,13 @@ public class Shop extends JFrame {
     //Grundlegende JFrame Einstellungen
     private void initComponents() {       
         //Schließoption und Cursor
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setCursor(new Cursor(Cursor.DEFAULT_CURSOR)); 
-        setSize(500,250);
+        this.setLayout(new BorderLayout());
+        this.setSize(500, 250);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setResizable(false);
+        this.getContentPane().setBackground(Color.BLACK);
+        this.setVisible(true);
         //Die Panels zum Frame hinzufügen
         getContentPane().add(initplNavigator(), BorderLayout.NORTH);
         getContentPane().add(initplLabels(), BorderLayout.CENTER);
@@ -103,7 +106,9 @@ public class Shop extends JFrame {
             new ClickerFrame("Slot Clicker").setVisible(true);
         });
         btToSlot.addActionListener((ActionEvent e) -> {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            dispose();
+            ClickerFrame.saveVermoegen(speicherort, vermoegen, autoclick, superclick, offlineproduction);
+            SlotFrame slotframe = new SlotFrame("Slot Machine",speicherort, autoclick, superclick, offlineproduction, vermoegen);
         });
         
         plNavigator.add(btBacktoClicker);
@@ -124,20 +129,24 @@ public class Shop extends JFrame {
         plLabels.setLayout(new GridLayout(3, 2));
         
         //Design Änderungen Buttons
-        //btAutoClick.setBackground(new Color(123, 171, 247));
+        
         lbAuto.setOpaque(true);
         lbAuto.setBackground(Color.BLACK);
         lbAuto.setForeground(Color.RED);
+        lbAuto.setBorder(BorderFactory.createLineBorder(new Color(123, 171, 247)));
         
         lbSuper.setOpaque(true);
         lbSuper.setBackground(Color.BLACK);
         lbSuper.setForeground(Color.RED);
+        lbSuper.setBorder(BorderFactory.createLineBorder(new Color(123, 171, 247)));
         
         lbOffline.setOpaque(true);
         lbOffline.setBackground(Color.BLACK);
         lbOffline.setForeground(Color.RED);
+        lbOffline.setBorder(BorderFactory.createLineBorder(new Color(123, 171, 247)));
         
         btAutoClick.setOpaque(true);
+        btAutoClick.setBackground(new Color(123, 171, 247));
         btAutoClick.setFont(inscription);
         btAutoClick.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btAutoClick.setFocusable(false);
@@ -205,27 +214,43 @@ public class Shop extends JFrame {
     private void onAutoClick(java.awt.event.ActionEvent evt) {
         if(vermoegen >= price1)
         {
-        autoclick++;
-        price1 = (int) (500 + Math.pow(2, autoclick));
-        vermoegen = vermoegen-price1;
-        btAutoClick.setText(price1 + "");
-        lbAuto.setText("Buy Autoclick (Level: " + autoclick + ")");
-        refreshCredits();
+            autoclick++;
+            price1 = (int) (500 + Math.pow(2, autoclick));
+            vermoegen = vermoegen-price1;
+            btAutoClick.setText(price1 + "");
+            lbAuto.setText("Buy Autoclick (Level: " + autoclick + ")");
+            refreshCredits();
         }
 
     }
 
     private void onSuperClick(java.awt.event.ActionEvent evt) {
-        
+        if(vermoegen >= price2)
+        {
+            superclick++;
+            price2 = (int) (1000 + Math.pow(3, superclick));
+            btSuperClick.setText("" + price2);
+            vermoegen = vermoegen-price2;
+            lbSuper.setText("Activate Superlick (Activations: " + superclick + ")");
+            refreshCredits();
+        }
     }
     
     private void onOfflinePro(java.awt.event.ActionEvent evt) {
-        
+        if(vermoegen >= price3)
+        {
+            offlineproduction++;
+            price3 = (int) (100 + 110 * offlineproduction);
+            btofflineProduction.setText("" + price3);
+            vermoegen = vermoegen-price3;
+            lbOffline.setText("Buy Offlineproduction (Level: " + autoclick + ")");
+            refreshCredits();
+        }
     }
     private void refreshCredits()
     {
         lbCredits.setText(" "+vermoegen+" Credits");
-        ClickerFrame.saveVermoegen(new File("src/res/save_file_vermoegen.txt"), vermoegen, autoclick, superclick, offlineproduction);
+        ClickerFrame.saveVermoegen(speicherort, vermoegen, autoclick, superclick, offlineproduction);
     }
 
     public int getVermoegen() {

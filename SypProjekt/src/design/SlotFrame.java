@@ -1,5 +1,6 @@
 package design;
 
+import static design.ClickerFrame.saveVermoegen;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -7,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -27,7 +29,8 @@ import javax.swing.SwingConstants;
 
 public class SlotFrame extends JFrame
 {
-
+    private int autoclick, superclick, offlineproduction, vermoegen;
+    private File f;
     private Container c;
     private JPanel plNavigator, plSlotMachine, controlpanel, plStartStopCollect, plInnerSlot, plSettings;
     private JPanel plBackground, plSettingsContainer;
@@ -41,15 +44,18 @@ public class SlotFrame extends JFrame
     private BufferedImage[] slotImages = new BufferedImage[9];
 
     private JLabel template_shootingStar;
-    private int vermoegen = 0;
 
     private int initCounter = 0;
 
     private boolean started = false;
 
-    public SlotFrame(String title, int vermoegen)
-    {
+    public SlotFrame(String title,File f, int autoclick, int superclick, int offlineproduction, int vermoegen) throws HeadlessException {
         super(title);
+        this.autoclick = autoclick;
+        this.superclick = superclick;
+        this.offlineproduction = offlineproduction;
+        this.vermoegen = vermoegen;
+        this.f = f;
         this.vermoegen = vermoegen;
         initComponents();
     }
@@ -161,6 +167,11 @@ public class SlotFrame extends JFrame
         btShop.setFont(new Font("Arial", Font.BOLD, 11));
         btShop.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btShop.setFocusable(false);
+        btShop.addActionListener((ActionEvent e) -> {
+            dispose();
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
+            Shop shop = new Shop(f, vermoegen, autoclick, superclick, offlineproduction);
+            });
 
         lbRoundResult = new JLabel();
         plNavigator.add(btClicker);

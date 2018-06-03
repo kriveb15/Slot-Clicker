@@ -94,8 +94,8 @@ public class ClickerFrame extends JFrame
         btSlotMachine.addActionListener((ActionEvent e) -> {
             dispose();
             saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
-            SlotFrame slotframe = new SlotFrame("Slot Machine", vermoegen);
-            //slotframe.setVermoegen(vermoegen);
+            SlotFrame slotframe = new SlotFrame("Slot Machine",f, autoclick, superclick, offlineproduction, vermoegen);
+            
         });
         
         btShop = new JButton("Shop");
@@ -107,8 +107,7 @@ public class ClickerFrame extends JFrame
         btShop.addActionListener((ActionEvent e) -> {
             dispose();
             saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
-            shop = new Shop(vermoegen, autoclick, superclick, offlineproduction);
-            shop.setVisible(true);
+            shop = new Shop(f, vermoegen, autoclick, superclick, offlineproduction);
         });
         
         plNavigator.add(btSlotMachine);
