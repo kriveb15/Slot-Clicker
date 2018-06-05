@@ -215,8 +215,8 @@ public class Shop extends JFrame {
         if(vermoegen >= price1)
         {
             autoclick++;
-            price1 = (int) (500 + Math.pow(2, autoclick));
             vermoegen = vermoegen-price1;
+            price1 = (int) (500 + Math.pow(2, autoclick)); 
             btAutoClick.setText(price1 + "");
             lbAuto.setText("Buy Autoclick (Level: " + autoclick + ")");
             refreshCredits();
@@ -240,10 +240,10 @@ public class Shop extends JFrame {
         if(vermoegen >= price3)
         {
             offlineproduction++;
-            price3 = (int) (100 + 110 * offlineproduction);
-            btofflineProduction.setText("" + price3);
             vermoegen = vermoegen-price3;
-            lbOffline.setText("Buy Offlineproduction (Level: " + autoclick + ")");
+            price3 = (int) (100 + 110 * offlineproduction);
+            btofflineProduction.setText("" + price3);            
+            lbOffline.setText("Buy Offlineproduction (Level: " + offlineproduction + ")");
             refreshCredits();
         }
     }
