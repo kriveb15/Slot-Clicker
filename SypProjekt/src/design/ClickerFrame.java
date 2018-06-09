@@ -6,9 +6,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -36,6 +37,8 @@ public class ClickerFrame extends JFrame
     private Container c;
     private static int vermoegen;
     private static File f;
+    private static int autoclick, superclick, offlineproduction;
+    private Shop shop;
     private Font inscription = new Font("Arial", Font.BOLD, 11);
     
     public ClickerFrame(String title)
@@ -50,7 +53,7 @@ public class ClickerFrame extends JFrame
         {
             System.out.println("unreadable");
         }
-        initComponents();       
+        initComponents(); 
     }
     
     private void initComponents()
@@ -72,7 +75,7 @@ public class ClickerFrame extends JFrame
    
     private void initNavigator()
     {
-        plNavigator = new JPanel(new BorderLayout());
+        plNavigator = new JPanel(new GridLayout(1,3));
         plNavigator.setPreferredSize(new Dimension(0, 30));
         
         lbVermoegen = new JLabel("Vermögen: " + vermoegen + " Credits", SwingConstants.CENTER);
@@ -88,16 +91,11 @@ public class ClickerFrame extends JFrame
         btSlotMachine.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btSlotMachine.setFocusable(false);
         
-        btSlotMachine.addActionListener(new ActionListener() 
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-               dispose();
-               saveVermoegen(f);
-               SlotFrame slotframe = new SlotFrame("Slot Machine", vermoegen);
-               //slotframe.setVermoegen(vermoegen);
-            }
+        btSlotMachine.addActionListener((ActionEvent e) -> {
+            dispose();
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
+            SlotFrame slotframe = new SlotFrame("Slot Machine",f, autoclick, superclick, offlineproduction, vermoegen);
+            
         });
         
         btShop = new JButton("Shop");
@@ -106,10 +104,15 @@ public class ClickerFrame extends JFrame
         btShop.setBackground(new Color(123, 171, 247));
         btShop.setOpaque(true);
         btShop.setFocusable(false);
+        btShop.addActionListener((ActionEvent e) -> {
+            dispose();
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
+            shop = new Shop(f, vermoegen, autoclick, superclick, offlineproduction);
+        });
         
-        plNavigator.add(lbVermoegen, BorderLayout.EAST);
-        plNavigator.add(btSlotMachine, BorderLayout.WEST);
-        plNavigator.add(btShop, BorderLayout.CENTER);
+        plNavigator.add(btSlotMachine);
+        plNavigator.add(btShop);
+        plNavigator.add(lbVermoegen);
     }
     
     private void initImage() throws IOException
@@ -150,10 +153,16 @@ public class ClickerFrame extends JFrame
         System.out.println("Versuche Speicherfile zu erreichen...");
         try 
         {
+            
             System.out.println("Speicherfile erreicht!");
             BufferedReader br = new BufferedReader(new FileReader(f));
             String line = br.readLine();
-            vermoegen = Integer.parseInt(line);
+            String[] tokens = line.split(",");
+            System.out.println(""+line);
+            vermoegen = Integer.parseInt(tokens[0]);
+            autoclick = Integer.parseInt(tokens[1]);
+            superclick = Integer.parseInt(tokens[2]);
+            offlineproduction = Integer.parseInt(tokens[3]);
             
         } 
         catch (FileNotFoundException ex) 
@@ -163,13 +172,14 @@ public class ClickerFrame extends JFrame
         
     }
     
-    public static void saveVermoegen(File f) 
+    public static void saveVermoegen(File f, int credits,int autoclick,int superclick,int offlineproduction) 
     {
        try
        {
           PrintWriter pw = new PrintWriter(f);
-          pw.write(""+vermoegen);
+          pw.write(""+credits+","+autoclick+","+superclick+","+offlineproduction);
           pw.close();
+           System.out.println("speichert");
        }
        catch(FileNotFoundException ex)
        {
@@ -181,7 +191,7 @@ public class ClickerFrame extends JFrame
     private void initFrame()
     {
         this.setLayout(new BorderLayout());
-        this.setSize(350, 500);
+        this.setSize(500, 400);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -198,7 +208,7 @@ public class ClickerFrame extends JFrame
             @Override
             public void run() 
             {
-               saveVermoegen(f);
+               saveVermoegen(f,vermoegen,autoclick,superclick,offlineproduction);
             }
         }));
     }
