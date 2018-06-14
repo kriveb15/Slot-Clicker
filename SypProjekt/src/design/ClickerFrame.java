@@ -57,7 +57,7 @@ public class ClickerFrame extends JFrame {
         c = this.getContentPane();
         try {
             initImage();
-            initNavigator();
+            initNavigator();      
         } catch (IOException ex) {
             System.out.println("x");
         }
