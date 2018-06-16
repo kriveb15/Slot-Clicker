@@ -20,6 +20,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Boolean.TRUE;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -32,7 +34,7 @@ import javax.swing.SwingConstants;
 public class ClickerFrame extends JFrame {
 
     private Options optionen;
-    public static JLabel lbVermoegen, imageHolder;
+    public static JLabel lbVermoegen, imageHolder, imageHolderOptions, lbOptions;
     private JPanel plNavigator;
     public static JButton btShop, btSlotMachine, btOptions;
     private Container c;
@@ -57,24 +59,25 @@ public class ClickerFrame extends JFrame {
         c = this.getContentPane();
         try {
             initImage();
-            initNavigator();      
+            initNavigator();
         } catch (IOException ex) {
             System.out.println("x");
         }
         initFrame();
         this.add(plNavigator, BorderLayout.NORTH);
-        this.add(imageHolder, BorderLayout.SOUTH);
+        this.add(imageHolder, BorderLayout.CENTER);
+        this.add(initOptions(), BorderLayout.SOUTH);
     }
 
     private void initNavigator() {
-        plNavigator = new JPanel(new GridLayout(1, 4));
+        plNavigator = new JPanel(new GridLayout(1, 3));
         plNavigator.setPreferredSize(new Dimension(0, 30));
 
         lbVermoegen = new JLabel("Vermögen: " + vermoegen + " Credits", SwingConstants.CENTER);
         if (Options.variante1 == TRUE) {
             lbVermoegen.setText("Vermögen: " + vermoegen + " Credits");
         } else if (Options.variante2 == TRUE) {
-            lbVermoegen.setText("Balance: "+vermoegen+" Credits");
+            lbVermoegen.setText("Balance: " + vermoegen + " Credits");
         } else if (Options.variante3 == TRUE) {
             lbVermoegen.setText("Patrimonio : " + vermoegen + " Credits");
         }
@@ -99,6 +102,13 @@ public class ClickerFrame extends JFrame {
         });
 
         btShop = new JButton("Shop");
+        if (Options.variante1 == TRUE) {
+            btShop.setText("Geschäft");
+        } else if (Options.variante2 == TRUE) {
+            btShop.setText("Shop");
+        } else if (Options.variante3 == TRUE) {
+            btShop.setText("Negozio");
+        }
         btShop.setFont(inscription);
         btShop.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         btShop.setBackground(new Color(123, 171, 247));
@@ -110,27 +120,14 @@ public class ClickerFrame extends JFrame {
             shop = new Shop(f, vermoegen, autoclick, superclick, offlineproduction);
         });
 
-        btOptions = new JButton("Optionen");
-        if(Options.variante1 == TRUE)
-        {
-            btOptions.setText("Optionen");
-        }
-        else if(Options.variante2 == TRUE)
-        {
-            btOptions.setText("Options");
-        }
-        else if(Options.variante3 == TRUE)
-        {
-            btOptions.setText("Opzioni");
-        }
-        
+        btOptions = new JButton();
         btOptions.setFont(inscription);
         btOptions.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        btOptions.setBackground(new Color(123, 171, 247));
+        btOptions.setBackground(Color.BLACK);
         btOptions.setOpaque(true);
         btOptions.setFocusable(false);
+        btOptions.setIcon(new ImageIcon("src/res/Options/zahnrad.png"));
         btOptions.addActionListener((ActionEvent e) -> {
-            dispose();
             saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
             optionen = new Options();
             optionen.setVisible(true);
@@ -139,7 +136,25 @@ public class ClickerFrame extends JFrame {
         plNavigator.add(btSlotMachine);
         plNavigator.add(btShop);
         plNavigator.add(lbVermoegen);
-        plNavigator.add(btOptions);
+    }
+
+    private JButton initOptions() {
+        btOptions = new JButton();
+        btOptions.setFont(inscription);
+        btOptions.setSize(new Dimension(20, 20));
+        btOptions.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        btOptions.setBackground(Color.BLACK);
+        btOptions.setOpaque(true);
+        btOptions.setFocusable(false);
+        btOptions.setContentAreaFilled(false);
+        btOptions.setBorder(BorderFactory.createEmptyBorder(1, 1, 2, -440));
+        btOptions.setIcon(new ImageIcon("src/res/Options/zahnrad.png"));
+        btOptions.addActionListener((ActionEvent e) -> {
+            saveVermoegen(f, vermoegen, autoclick, superclick, offlineproduction);
+            optionen = new Options();
+            optionen.setVisible(true);
+        });
+        return btOptions;
     }
 
     private void initImage() throws IOException {
@@ -158,8 +173,14 @@ public class ClickerFrame extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("clicked");
-                vermoegen++;
-                lbVermoegen.setText("Vermögen: " + vermoegen + " Credits");
+                vermoegen++;;
+                if (Options.variante1 == TRUE) {
+                    lbVermoegen.setText("Vermögen: " + vermoegen + " Credits");
+                } else if (Options.variante2 == TRUE) {
+                    lbVermoegen.setText("Balance: " + vermoegen + " Credits");
+                } else if (Options.variante3 == TRUE) {
+                    lbVermoegen.setText("Patrimonio : " + vermoegen + " Credits");
+                }
                 imageHolder.setIcon(activeImage);
             }
 

@@ -1,9 +1,11 @@
 package design;
 
 import design.ClickerFrame;
+import static design.ClickerFrame.btShop;
 import static design.ClickerFrame.vermoegen;
 import static design.Shop.lbAuto;
 import static design.Shop.lbSuper;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -39,10 +41,10 @@ public class Options extends JFrame {
     private JRadioButton rbItaly, rbEnglish, rbGerman;
     private Font inscription = new Font("Arial", Font.BOLD, 11);
     private JPanel plNavigator, plLanugages;
-    private ClickerFrame clickerFrame = new ClickerFrame("");
+    //private ClickerFrame clickerFrame = new ClickerFrame("");
 
     public Options() {
-        this.setSize(new Dimension(600, 300));
+        this.setSize(new Dimension(300, 150));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.initComponents();
@@ -50,18 +52,21 @@ public class Options extends JFrame {
 
     private void initComponents() {
         Container c = this.getContentPane();
-        c.setLayout(new GridLayout(2, 1));
+        c.setLayout(new BorderLayout());
+     //   c.setLayout(new GridLayout(2, 1));
         try {
-            c.add(initPanelNavigator());
-            c.add(initLanguages());
+            c.add(initPanelNavigator(), BorderLayout.NORTH);
+            c.add(initLanguages(), BorderLayout.SOUTH);
         } catch (IOException ex) {
             Logger.getLogger(Options.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.pack();
     }
 
     private JPanel initPanelNavigator() {
         plNavigator = new JPanel();
-        plNavigator.setLayout(new GridLayout(1, 2));
+        plNavigator.setLayout(new BorderLayout());
+        
         btExit = new JButton();
         if(variante1 == TRUE)
         {
@@ -82,8 +87,9 @@ public class Options extends JFrame {
         btExit.setBackground(new Color(123, 171, 247));
         btExit.setOpaque(true);
         btExit.setFocusable(false);
+        btExit.setPreferredSize(new Dimension(120,40));
         btExit.addActionListener(e -> onClose(e) );
-        plNavigator.add(btExit);
+        plNavigator.add(btExit, BorderLayout.WEST);
 
         btSelect = new JButton();
         if(variante1 == TRUE)
@@ -104,6 +110,7 @@ public class Options extends JFrame {
         btSelect.setOpaque(true);
         btSelect.setBackground(new Color(123, 171, 247));
         btSelect.setFocusable(false);
+        btSelect.setPreferredSize(new Dimension(120,40));
         btSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,7 +118,7 @@ public class Options extends JFrame {
                 setVisible(true);
             }
         });
-        plNavigator.add(btSelect);
+        plNavigator.add(btSelect, BorderLayout.EAST);
         return plNavigator;
     }
 
@@ -201,6 +208,7 @@ public class Options extends JFrame {
             btExit.setText("Schließen");
             ClickerFrame.btOptions.setText("Optionen");
             ClickerFrame.lbVermoegen.setText("Vermögen : " + vermoegen + " Credits");
+            ClickerFrame.btShop.setText("Geschäft");
         } else if (english == true) {
             variante1 = FALSE;
             variante3 = FALSE;
@@ -211,6 +219,7 @@ public class Options extends JFrame {
            btExit.setText("Exit");
             ClickerFrame.btOptions.setText("Options");
             ClickerFrame.lbVermoegen.setText("Balance : " + vermoegen + " Credits");
+            ClickerFrame.btShop.setText("Shop");
         } else if (italy == true) {
             variante1 = FALSE;
              variante2 = FALSE;
@@ -221,6 +230,7 @@ public class Options extends JFrame {
             btExit.setText("Chiudere");
             ClickerFrame.btOptions.setText("Opzioni");
             ClickerFrame.lbVermoegen.setText("Patrimonio : " + vermoegen + " Credits");
+            ClickerFrame.btShop.setText("Negozio");
         }
     }
 
